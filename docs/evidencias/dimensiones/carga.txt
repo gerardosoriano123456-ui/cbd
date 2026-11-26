@@ -1,0 +1,167 @@
+Gerardo Soriano | 20252481
+
+SQL Server 2022 Developer - ejecución con datos ficticios
+
+$ ejecutar dw/00_origen_demo.sql
+Changed database context to 'master'.
+$ ejecutar dw/01_crear_modelo.sql
+Changed database context to 'master'.
+Modelo creado: 6 dimensiones y 1 tabla de hechos. No hay opiniones cargadas.
+$ ejecutar dw/02_cargar_dimensiones.sql
+Changed database context to 'analisis_opiniones_dw'.
+dimension | insertadas | actualizadas
+dim_cliente | 8 | 0
+dim_evento | 0 | 0
+dim_fecha | 3 | 0
+dim_fuente | 4 | 0
+dim_producto | 4 | 0
+dim_sentimiento | 0 | 0
+
+$ ejecutar dw/03_verificar_dimensiones.sql
+Changed database context to 'analisis_opiniones_dw'.
+base_destino | version_motor
+analisis_opiniones_dw | 16.0.4205.1
+
+tabla | filas
+dim_cliente | 9
+dim_evento | 1
+dim_fecha | 3
+dim_fuente | 4
+dim_producto | 4
+dim_sentimiento | 4
+fact_opinion | 0
+
+fecha_id | fecha | anio | trimestre | mes | dia
+20261015 | 2026-10-15 | 2026 | 4 | 10 | 15
+20261016 | 2026-10-16 | 2026 | 4 | 10 | 16
+20261017 | 2026-10-17 | 2026 | 4 | 10 | 17
+
+producto_id | codigo_origen | nombre | categoria
+1 | 501 | Audífonos inalámbricos | Audio
+2 | 502 | Ratón inalámbrico | Accesorios
+3 | 503 | Batería portátil | Energía
+4 | 504 | Cargador USB-C | Energía
+
+cliente_id | codigo_origen | ciudad
+0 | ANONIMO | NULL
+1 | 1001 | Santo Domingo
+2 | 1002 | Boca Chica
+3 | 1003 | Santiago
+4 | 1004 | Santo Domingo
+5 | 1005 | La Romana
+6 | 1006 | Boca Chica
+7 | 1007 | Santiago
+8 | 1008 | La Romana
+
+fuente_id | codigo | canal | tipo_origen
+1 | ANALISIS_OPINIONES:101 | ENCUESTA | CSV
+2 | ANALISIS_OPINIONES:205 | RED_SOCIAL | API_REST
+3 | ANALISIS_OPINIONES:307 | RED_SOCIAL | API_REST
+4 | ANALISIS_OPINIONES:409 | WEB | BASE_DATOS
+
+sentimiento_id | nombre
+0 | SIN_CLASIFICAR
+1 | POSITIVO
+2 | NEGATIVO
+3 | NEUTRO
+
+evento_id | codigo | nombre
+0 | SIN_EVENTO | Sin evento identificado
+
+$ ejecutar dw/02_cargar_dimensiones.sql
+Changed database context to 'analisis_opiniones_dw'.
+dimension | insertadas | actualizadas
+dim_cliente | 0 | 0
+dim_evento | 0 | 0
+dim_fecha | 0 | 0
+dim_fuente | 0 | 0
+dim_producto | 0 | 0
+dim_sentimiento | 0 | 0
+
+$ ejecutar dw/03_verificar_dimensiones.sql
+Changed database context to 'analisis_opiniones_dw'.
+base_destino | version_motor
+analisis_opiniones_dw | 16.0.4205.1
+
+tabla | filas
+dim_cliente | 9
+dim_evento | 1
+dim_fecha | 3
+dim_fuente | 4
+dim_producto | 4
+dim_sentimiento | 4
+fact_opinion | 0
+
+fecha_id | fecha | anio | trimestre | mes | dia
+20261015 | 2026-10-15 | 2026 | 4 | 10 | 15
+20261016 | 2026-10-16 | 2026 | 4 | 10 | 16
+20261017 | 2026-10-17 | 2026 | 4 | 10 | 17
+
+producto_id | codigo_origen | nombre | categoria
+1 | 501 | Audífonos inalámbricos | Audio
+2 | 502 | Ratón inalámbrico | Accesorios
+3 | 503 | Batería portátil | Energía
+4 | 504 | Cargador USB-C | Energía
+
+cliente_id | codigo_origen | ciudad
+0 | ANONIMO | NULL
+1 | 1001 | Santo Domingo
+2 | 1002 | Boca Chica
+3 | 1003 | Santiago
+4 | 1004 | Santo Domingo
+5 | 1005 | La Romana
+6 | 1006 | Boca Chica
+7 | 1007 | Santiago
+8 | 1008 | La Romana
+
+fuente_id | codigo | canal | tipo_origen
+1 | ANALISIS_OPINIONES:101 | ENCUESTA | CSV
+2 | ANALISIS_OPINIONES:205 | RED_SOCIAL | API_REST
+3 | ANALISIS_OPINIONES:307 | RED_SOCIAL | API_REST
+4 | ANALISIS_OPINIONES:409 | WEB | BASE_DATOS
+
+sentimiento_id | nombre
+0 | SIN_CLASIFICAR
+1 | POSITIVO
+2 | NEGATIVO
+3 | NEUTRO
+
+evento_id | codigo | nombre
+0 | SIN_EVENTO | Sin evento identificado
+
+--- Prueba de actualización SCD tipo 1 sobre el origen ficticio ---
+
+$ SELECT producto_id, codigo_origen, nombre FROM analisis_opiniones_dw.dbo.dim_producto WHERE sistema_origen = N'ANALISIS_OPINIONES' AND codigo_origen = N'501';
+producto_id | codigo_origen | nombre
+1 | 501 | Audífonos inalámbricos
+
+$ UPDATE analisis_opiniones.dbo.producto SET nombre = N'Audífonos Bluetooth' WHERE id_producto = 501;
+$ ejecutar dw/02_cargar_dimensiones.sql
+Changed database context to 'analisis_opiniones_dw'.
+dimension | insertadas | actualizadas
+dim_cliente | 0 | 0
+dim_evento | 0 | 0
+dim_fecha | 0 | 0
+dim_fuente | 0 | 0
+dim_producto | 0 | 1
+dim_sentimiento | 0 | 0
+
+$ SELECT producto_id, codigo_origen, nombre FROM analisis_opiniones_dw.dbo.dim_producto WHERE sistema_origen = N'ANALISIS_OPINIONES' AND codigo_origen = N'501';
+producto_id | codigo_origen | nombre
+1 | 501 | Audífonos Bluetooth
+
+$ UPDATE analisis_opiniones.dbo.producto SET nombre = N'Audífonos inalámbricos' WHERE id_producto = 501;
+$ ejecutar dw/02_cargar_dimensiones.sql
+Changed database context to 'analisis_opiniones_dw'.
+dimension | insertadas | actualizadas
+dim_cliente | 0 | 0
+dim_evento | 0 | 0
+dim_fecha | 0 | 0
+dim_fuente | 0 | 0
+dim_producto | 0 | 1
+dim_sentimiento | 0 | 0
+
+$ SELECT producto_id, codigo_origen, nombre FROM analisis_opiniones_dw.dbo.dim_producto WHERE sistema_origen = N'ANALISIS_OPINIONES' AND codigo_origen = N'501';
+producto_id | codigo_origen | nombre
+1 | 501 | Audífonos inalámbricos
+
