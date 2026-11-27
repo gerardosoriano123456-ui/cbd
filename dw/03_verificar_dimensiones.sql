@@ -3,6 +3,12 @@ GO
 SET NOCOUNT ON;
 SELECT DB_NAME() AS base_destino, SERVERPROPERTY('ProductVersion') AS version_motor;
 
+SELECT
+    N'02_cargar_dimensiones.sql' AS ensamble_carga,
+    N'T-SQL transaccional' AS tecnologia,
+    N'SCD tipo 1 para producto, cliente y fuente' AS estrategia,
+    N'analisis_opiniones -> analisis_opiniones_dw' AS flujo;
+
 SELECT N'dim_cliente' AS tabla, COUNT(*) AS filas FROM dbo.dim_cliente
 UNION ALL SELECT N'dim_evento', COUNT(*) FROM dbo.dim_evento
 UNION ALL SELECT N'dim_fecha', COUNT(*) FROM dbo.dim_fecha
